@@ -1,0 +1,85 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #ff5f58;
+  --color-secondary: #ffffff;
+  --color-primary-hover: #e24942;
+  --color-dark: #161616;
+  --color-dark-card: #1c1c1c;
+  --color-dark-input: #252525;
+  --color-dark-hover: #2a2a2a;
+  --color-dark-border: #333333;
+  --color-light: #f7f9fc;
+  --color-light-border: #eecdcc;
+
+  --font-sans: var(--font-sans, "Inter", "Arial", sans-serif);
+}
+
+:root {
+  --background: var(--color-light);
+  --foreground: var(--color-dark);
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  overflow-x: hidden;
+}
+
+/* Utilities for the new design */
+.rounded-4xl {
+  border-radius: 2.5rem;
+}
+
+.cutout-top-right {
+  position: relative;
+}
+
+.cutout-top-right::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 50px;
+  height: 50px;
+  background-color: var(--background);
+  border-bottom-left-radius: 20px;
+}
+
+.btn-primary {
+  @apply bg-primary text-white font-medium rounded-full hover:bg-primary-hover transition-colors;
+}
+
+.btn-dark {
+  @apply bg-dark text-white font-medium rounded-full hover:bg-gray-800 transition-colors;
+}
+
+.btn-outline {
+  @apply border border-gray-300 text-dark font-medium rounded-full hover:border-gray-400 transition-colors;
+}
+
+.tag-pill {
+  @apply inline-flex items-center gap-2 bg-white px-4 py-2 rounded-full shadow-sm text-sm font-medium whitespace-nowrap;
+}
+
+/* Auto-Marquee Animation */
+@keyframes marquee {
+  0% {
+    transform: translateX(0%);
+  }
+
+  100% {
+    transform: translateX(calc(-50% - 1rem));
+  }
+}
+
+.animate-marquee {
+  animation: marquee 35s linear infinite;
+  display: flex;
+  width: max-content;
+}
+
+.animate-marquee:hover {
+  animation-play-state: paused;
+}

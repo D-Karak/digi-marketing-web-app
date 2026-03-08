@@ -27,7 +27,7 @@ const syncUserWithDatabase = async (req, res) => {
 
         if (user) {
             // Update last login
-            user.lastLoginAt = Date.now();
+            user.lastLoginAt = new Date();
             if (displayName && !user.displayName) user.displayName = displayName;
             if (firstName && !user.firstName) user.firstName = firstName;
             if (lastName && !user.lastName) user.lastName = lastName;
@@ -45,7 +45,7 @@ const syncUserWithDatabase = async (req, res) => {
                 lastName,
                 photoURL,
                 authProvider: authProvider || 'email',
-                lastLoginAt: Date.now()
+                lastLoginAt: new Date()
             });
         }
 
