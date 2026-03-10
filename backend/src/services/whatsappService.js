@@ -1,4 +1,6 @@
-const { Client, LocalAuth } = require('whatsapp-web.js');
+const { Client, RemoteAuth } = require('whatsapp-web.js');
+const { MongoStore } = require('wwebjs-mongo');
+const mongoose = require('mongoose');
 
 class WhatsAppService {
     static instance;
@@ -47,13 +49,23 @@ class WhatsAppService {
         session.status = 'loading';
         this.broadcastStatus(userId);
 
-        // Uses a unique clientId so local auth saves isolated sessions per user
+        const store = new MongoStore({ mongoose: mongoose });
+
+        // Uses a unique clientId so RemoteAuth saves isolated sessions per user in MongoDB
         session.client = new Client({
-            authStrategy: new LocalAuth({ clientId: `user_${userId}` }),
+            authStrategy: new RemoteAuth({
+                clientId: `user_${userId}`,
+                store: store,
+                backupSyncIntervalMs: 300000
+            }),
             puppeteer: {
                 headless: true,
                 args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--disable-accelerated-2d-canvas', '--no-first-run', '--no-zygote', '--disable-gpu']
             }
+        });
+
+        session.client.on('remote_session_saved', () => {
+            console.log(`☁️ Remote MongoDB Session gracefully synced for user: ${userId}`);
         });
 
         session.client.on('qr', (qr) => {
