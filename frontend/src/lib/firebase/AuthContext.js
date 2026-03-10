@@ -1,7 +1,7 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState } from 'react';
-import { onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, GoogleAuthProvider, OAuthProvider, signInWithPopup, updateProfile } from 'firebase/auth';
+import { onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, GoogleAuthProvider, OAuthProvider, signInWithPopup, updateProfile, sendEmailVerification } from 'firebase/auth';
 import { auth } from './config';
 import { syncUserWithBackendDatabase } from '../../services/authApiService';
 
@@ -19,6 +19,8 @@ export const AuthProvider = ({ children }) => {
                 setUser({
                     uid: user.uid,
                     email: user.email,
+                    emailVerified: user.emailVerified,
+                    displayName: user.displayName,
                 });
             } else {
                 setUser(null);
@@ -40,6 +42,10 @@ export const AuthProvider = ({ children }) => {
         await updateProfile(userCredential.user, {
             displayName: `${firstName} ${lastName}`.trim()
         });
+
+        // Send the verification email before pushing to the DB
+        await sendEmailVerification(userCredential.user);
+
         // We pass the fresh credentials to mongodb
         await syncUserWithBackendDatabase(userCredential.user, {
             authProvider: 'email',

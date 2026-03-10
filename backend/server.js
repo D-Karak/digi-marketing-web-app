@@ -1,8 +1,13 @@
 const express = require('express');
 const cors = require('cors');
-const helmet = require('helmet');
+const helmet = require('helmet').default;
 const morgan = require('morgan');
 require('dotenv').config();
+
+// Catch unhandled Promise rejections from terminating the Node Server immediately
+process.on('unhandledRejection', (reason, promise) => {
+    console.error('Unhandled Rejection automatically caught:', reason);
+});
 
 // ==========================================
 // 1. External Database Connection
@@ -51,6 +56,48 @@ app.use('/api/users', userProfileRoutes); // Handles /api/users/profile/:uid
 app.use(notFound);
 app.use(errorHandler);
 
-// Boot up Node Server
+// Boot up Node Server with Socket.io Attachments
+const http = require('http');
+const { Server } = require('socket.io');
+const whatsappService = require('./src/services/whatsappService');
+
+const server = http.createServer(app);
+
+// Setup Socket.io
+const io = new Server(server, {
+    cors: {
+        origin: ['http://localhost:3000', process.env.CLIENT_ORIGIN_URL].filter(url => !!url),
+        methods: ['GET', 'POST']
+    }
+});
+
+// Pass instance to the service singleton
+whatsappService.setSocket(io);
+
+io.on('connection', (socket) => {
+    console.log(`🔌 A new client dynamically hooked up: ${socket.id}`);
+
+    // Request initial connection state natively tied to their ID
+    socket.on('whatsapp_request_status', ({ userId }) => {
+        if (userId) {
+            socket.join(userId);
+            socket.emit('whatsapp_status_update', whatsappService.getStatus(userId));
+        }
+    });
+
+    // Listen for frontend commands dynamically tied to userId
+    socket.on('whatsapp_generate_qr', ({ userId }) => {
+        if (userId) whatsappService.init(userId);
+    });
+
+    socket.on('whatsapp_disconnect', ({ userId }) => {
+        if (userId) whatsappService.disconnect(userId);
+    });
+
+    socket.on('disconnect', () => {
+        console.log(`🔌 Client unhooked: ${socket.id}`);
+    });
+});
+
 const PORT = process.env.PORT || 5001;
-app.listen(PORT, () => console.log(`🚀 Server safely listening locally on http://localhost:${PORT}`));
+server.listen(PORT, () => console.log(`🚀 Server safely listening locally on http://localhost:${PORT}`));

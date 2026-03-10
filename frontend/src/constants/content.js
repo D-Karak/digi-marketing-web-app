@@ -111,3 +111,38 @@ export const FOOTER_STATS = {
     casesSolved: "280+",
     dailyLogins: "10.000+"
 };
+
+export const DASHBOARD_STATS = {
+    growthRate: {
+        current: "390 K",
+        previous: "270 K",
+        increase: "+120K"
+    },
+    wallet: {
+        balance: "4500$"
+    },
+    lastCampaign: {
+        name: "Holiday",
+        date: "12 - 16 oct 2024",
+        platform: "Instagram"
+    },
+    overview: {
+        runInMonth: 6,
+        monthName: "March",
+        awaitingPaymentTotal: 23,
+        awaitingPaymentCurrent: 2,
+        awaitingPaymentAmount: "2900$"
+    },
+    guideline: {
+        title: "How to build a campaign for social networks?",
+        description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Egestas purus viverra accumsan in nisl nisi."
+    }
+};
+
+export const RECENT_CAMPAIGNS = [
+    { id: 1, name: 'Summer campaign', platform: 'Instagram', time: '01 Apr 2025 00:00', status: 'Upcoming', statusColor: 'bg-blue-100 text-blue-700' },
+    { id: 2, name: 'Holliday', platform: 'Telegram', time: '12 Oct 2024 00:00', status: 'Ongoing', statusColor: 'bg-green-100 text-green-700' },
+    { id: 3, name: 'For your valentine!', platform: 'Telegram', time: '10 Feb 2024 00:00', status: 'Ended', statusColor: 'bg-red-100 text-red-700' },
+    { id: 4, name: 'Winter is comming!', platform: 'Instagram', time: '01 Aug 2024 00:00', status: 'Ended', statusColor: 'bg-red-100 text-red-700' },
+    { id: 5, name: 'Spring collection', platform: 'Telegram', time: '01 May 2023 00:00', status: 'Ended', statusColor: 'bg-red-100 text-red-700' },
+];
